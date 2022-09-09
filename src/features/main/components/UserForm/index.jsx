@@ -10,6 +10,7 @@ import {
   NAME_CHARACTER_MESSAGE,
   PHONENUMBER_CHARACTER_MESSAGE,
 } from "common/contants/messageContant";
+import { groupId } from "common/contants/myContants";
 
 const { Option } = Select;
 
@@ -27,7 +28,10 @@ function UserForm(props) {
     hoTen: yup
       .string()
       .required(REQUIRED_MESSAGE)
-      .matches(/^[A-Za-z ]+$/g, NAME_CHARACTER_MESSAGE),
+      .matches(
+        /^[A-Za-zàáãạảăắằẳẵặâấầẩẫậèéẹẻẽêềếểễệđìíĩỉịòóõọỏôốồổỗộơớờởỡợùúũụủưứừửữựỳỵỷỹýÀÁÃẠẢĂẮẰẲẴẶÂẤẦẨẪẬÈÉẸẺẼÊỀẾỂỄỆĐÌÍĨỈỊÒÓÕỌỎÔỐỒỔỖỘƠỚỜỞỠỢÙÚŨỤỦƯỨỪỬỮỰỲỴỶỸÝ ]+$/g,
+        NAME_CHARACTER_MESSAGE
+      ),
   });
 
   const formik = useFormik({
@@ -42,12 +46,19 @@ function UserForm(props) {
     },
     validationSchema: schema,
     onSubmit: (values) => {
-      if (values.maLoaiNguoiDung === "") {
+      if (!values.maLoaiNguoiDung) {
         values.maLoaiNguoiDung = userTypes[0].maLoaiNguoiDung;
       }
-      const user = { ...values, maNhom: "GP00" };
-      
-      props.handleSubmit(user);
+      const user = { ...values, maNhom: groupId };
+
+      let actionType;
+      if (props.selectedUser.taiKhoan) {
+        actionType = "Update";
+      } else {
+        actionType = "Create";
+      }
+
+      props.handleSubmit(user, actionType);
     },
   });
 
@@ -75,6 +86,7 @@ function UserForm(props) {
     <div className={Style.form}>
       <form onSubmit={formik.handleSubmit}>
         <div className={Style.inputGroup}>
+          <span className={Style.label}>Tài khoản</span>
           <Input
             placeholder="Tài khoản"
             name="taiKhoan"
@@ -88,6 +100,7 @@ function UserForm(props) {
         </div>
 
         <div className={Style.inputGroup}>
+          <span className={Style.label}>Mật khẩu</span>
           <Input.Password
             placeholder="Mật khẩu"
             name="matKhau"
@@ -101,6 +114,7 @@ function UserForm(props) {
         </div>
 
         <div className={Style.inputGroup}>
+          <span className={Style.label}>Email</span>
           <Input
             placeholder="Email"
             name="email"
@@ -114,6 +128,7 @@ function UserForm(props) {
         </div>
 
         <div className={Style.inputGroup}>
+          <span className={Style.label}>Số điện thoại</span>
           <Input
             placeholder="Số điện thoại"
             name="soDt"
@@ -127,6 +142,7 @@ function UserForm(props) {
         </div>
 
         <div className={Style.inputGroup}>
+          <span className={Style.label}>Họ tên</span>
           <Input
             placeholder="Họ tên"
             name="hoTen"
@@ -139,6 +155,7 @@ function UserForm(props) {
           )}
         </div>
 
+        <span className={Style.label}>Loại khách hàng</span>
         <Select
           className={Style.userType}
           value={formik.values.maLoaiNguoiDung || userTypes[0]?.maLoaiNguoiDung}

@@ -1,40 +1,110 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Button, Modal, Input } from "antd";
 import UserForm from "features/main/components/UserForm";
 import Style from "features/main/pages/UserManagement/style.module.css";
 import instace from "api/instance";
+import UserList from "features/main/components/userList";
+import { groupId } from "common/contants/myContants";
+import {
+  CREATE_SUCCESS_MESSAGE,
+  UPDATE_SUCCESS_MESSAGE,
+  DELETE_SUCCESS_MESSAGE,
+} from "common/contants/messageContant";
 
 function UserManagement() {
   const { Search } = Input;
-  const { info, error } = Modal;
+  const { info, error, confirm } = Modal;
 
   const [open, setOpen] = useState(false);
   const [selectedUser, setSelectedUser] = useState({});
-
-  useEffect(() => {
-    fetchUserList();
+  const [userList, setUserList] = useState([]);
+  const [paginationConfig, setPaginationConfig] = useState({
+    currentPage: 1,
+    pageSize: 10,
+    totalCount: 0,
   });
+  const keyWord = useRef("");
 
+  //Hooks
+  useEffect(() => {
+    if (!keyWord.current) {
+      fetchUserList();
+    } else {
+      fetchSearchUserList(keyWord.current);
+    }
+    //fetchUserList();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [paginationConfig.currentPage]);
+
+  //Hooks
+
+  //Api function
   const fetchUserList = async () => {
     try {
       const response = await instace.request({
         url: "/api/QuanLyNguoiDung/LayDanhSachNguoiDungPhanTrang",
         method: "GET",
         params: {
-          maNhom: "GP08",
-          soTrang: 1,
-          soPhanTuTrenTrang: 10,
+          maNhom: groupId,
+          soTrang: paginationConfig.currentPage,
+          soPhanTuTrenTrang: paginationConfig.pageSize,
         },
       });
+
+      const total = response.data.content.totalCount;
+      setPaginationConfig({ ...paginationConfig, totalCount: total });
+      setUserList(response.data.content.items);
     } catch (error) {
       console.log(error.response.data.content);
     }
   };
 
-  const showInfo = () => {
+  const fetchSearchUserList = async (value) => {
+    try {
+      const response = await instace.request({
+        url: "/api/QuanLyNguoiDung/TimKiemNguoiDungPhanTrang",
+        method: "GET",
+        params: {
+          maNhom: groupId,
+          tuKhoa: value,
+          soTrang: paginationConfig.currentPage,
+          soPhanTuTrenTrang: paginationConfig.pageSize,
+        },
+      });
+
+      const total = response.data.content.totalCount;
+      setPaginationConfig({ ...paginationConfig, totalCount: total });
+      setUserList(response.data.content.items);
+    } catch (error) {
+      console.log(error.response.data.content);
+    }
+  };
+
+  const deleteUser = async (value) => {
+    try {
+      // eslint-disable-next-line no-unused-vars
+      const response = await instace.request({
+        url: "/api/QuanLyNguoiDung/XoaNguoiDung",
+        method: "DELETE",
+        params: {
+          TaiKhoan: value,
+        },
+      });
+
+      showInfo(DELETE_SUCCESS_MESSAGE);
+      reloadData();
+    } catch (error) {
+      showError(error.response.data.content);
+    }
+  };
+
+  //Api function
+
+  //Message box
+  const showInfo = (message) => {
     info({
       title: "Thông báo",
-      content: "Thêm người dùng thành công",
+      content: message,
     });
   };
 
@@ -45,21 +115,60 @@ function UserManagement() {
     });
   };
 
-  const handleSubmit = async (user) => {
-    try {
-      // eslint-disable-next-line no-unused-vars
-      const response = await instace.request({
-        url: "/api/QuanLyNguoiDung/ThemNguoiDung",
-        method: "POST",
-        data: user,
-      });
+  const showConfirm = (userName) => {
+    confirm({
+      title: "Xác nhận",
+      content: `Bạn có muốn xóa người dùng ${userName}`,
+      onOk() {
+        deleteUser(userName);
+      },
+      onCancel() {
+        console.log("Cancel");
+      },
+    });
+  };
 
-      showInfo();
-    } catch (error) {
-      console.log(error.response.data.content);
-      showError(error.response.data.content);
-    } finally {
-      setOpen(false);
+  //Message box
+
+  //Event
+  const handleSubmit = async (user, actionType) => {
+    switch (actionType) {
+      case "Create":
+        try {
+          // eslint-disable-next-line no-unused-vars
+          const response = await instace.request({
+            url: "/api/QuanLyNguoiDung/ThemNguoiDung",
+            method: "POST",
+            data: user,
+          });
+
+          showInfo(CREATE_SUCCESS_MESSAGE);
+          reloadData();
+        } catch (error) {
+          showError(error.response.data.content);
+        } finally {
+          setOpen(false);
+        }
+        break;
+      case "Update":
+        try {
+          // eslint-disable-next-line no-unused-vars
+          const response = await instace.request({
+            url: "/api/QuanLyNguoiDung/CapNhatThongTinNguoiDung",
+            method: "POST",
+            data: user,
+          });
+
+          showInfo(UPDATE_SUCCESS_MESSAGE);
+          reloadData();
+        } catch (error) {
+          showError(error.response.data.content);
+        } finally {
+          setOpen(false);
+        }
+        break;
+      default:
+        break;
     }
   };
 
@@ -68,9 +177,44 @@ function UserManagement() {
     setOpen(true);
   };
 
-  const onSearch = (value) => {
-    console.log(value);
+  const handleUpdateButtonClick = (user) => {
+    setSelectedUser(user);
+    setOpen(true);
   };
+
+  const handleDeleteButtonClick = (userName) => {
+    showConfirm(userName);
+  };
+
+  const onSearch = async (value) => {
+    keyWord.current = value;
+
+    if (paginationConfig.currentPage > 1) {
+      setPaginationConfig({ ...paginationConfig, currentPage: 1 });
+    } else {
+      if (value === "") {
+        fetchUserList();
+      } else {
+        fetchSearchUserList(value);
+      }
+    }
+  };
+
+  const handleChangePage = (currentPage) => {
+    setPaginationConfig({ ...paginationConfig, currentPage: currentPage });
+  };
+
+  //Event
+
+  //Other function
+  const reloadData = () => {
+    if (keyWord.current === "") {
+      fetchUserList();
+    } else {
+      fetchSearchUserList(keyWord.current);
+    }
+  };
+  //Other function
 
   return (
     <div className={Style.main}>
@@ -92,11 +236,20 @@ function UserManagement() {
 
       <div className={Style.userListContainer}>
         <Search
+          className={Style.searchBox}
           placeholder="input search text"
           onSearch={onSearch}
           style={{
             width: 300,
           }}
+        />
+
+        <UserList
+          userList={userList}
+          paginationConfig={paginationConfig}
+          handleChangePage={handleChangePage}
+          handleUpdateButtonClick={handleUpdateButtonClick}
+          handleDeleteButtonClick={handleDeleteButtonClick}
         />
       </div>
     </div>
