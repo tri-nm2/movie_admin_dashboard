@@ -1,0 +1,20 @@
+.sideBar {
+  margin-top: 10px;
+  margin-right: 20px;
+  min-width: 200px;
+  max-width: 200px;
+  height: 100%;
+}
+
+.sideBar .space {
+  margin: 20px 0px;
+}
+
+@media screen and (max-width: 992px) {
+    .sideBar {
+        margin-top: 10px;
+        margin-right: 20px;
+        min-width: 20px;
+        max-width: 20px;
+      }
+}

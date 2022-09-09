@@ -1,0 +1,22 @@
+.formContainer {
+  width: 100%;
+}
+
+.formContainer form {
+  width: 500px;
+  margin: 60px auto 0px auto;
+}
+
+.formContainer .inputGroup {
+    margin-bottom: 20px;
+}
+
+.formContainer .inputGroup .errorMessage {
+    display: block;
+    margin-top: 5px;
+    color: red;
+}
+
+.formContainer form button{
+    width: 100%;
+}
