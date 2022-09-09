@@ -13,6 +13,7 @@ const UserManagement = React.lazy(() =>
   import("features/main/pages/UserManagement")
 );
 const SignIn = React.lazy(() => import("features/authentication/pages/SignIn"));
+const Profile = React.lazy(() => import("features/user/pages/profile"));
 
 function App() {
   const dispatch = useDispatch();
@@ -41,6 +42,9 @@ function App() {
               </Route>
               <Route path="/userManagement">
                 <UserManagement />
+              </Route>
+              <Route path="/profile">
+                <Profile />
               </Route>
             </Switch>
           </Suspense>

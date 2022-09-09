@@ -4,7 +4,7 @@ import { Space } from "antd";
 import Style from "common/components/Header/style.module.css";
 import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "features/authentication/authenticationSlice";
-import { useHistory } from "react-router-dom";
+import { NavLink, useHistory } from "react-router-dom";
 
 function CyberMovieHeader() {
   const userInfo = useSelector((state) => state.authentication.userInfo);
@@ -25,12 +25,12 @@ function CyberMovieHeader() {
             <h1>Cybermovie</h1>
           </div>
           <div className={Style.user}>
-            <a href="/#">
+            <NavLink to="/profile">
               <Space>
                 <UserOutlined className={Style.userIcon} />
                 Chào {userInfo.taiKhoan}
               </Space>
-            </a>
+            </NavLink>
             <a href="/#" onClick={() => handleLogOutClick()}>
               <span>Đăng Xuất</span>
             </a>

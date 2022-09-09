@@ -36,7 +36,7 @@ function SideBar() {
       return (
         <div className={Style.sideBar}>
           <Sider
-            style={{ height: 100 + "%" }}
+            style={{ height: 100 + "%", zIndex: 9999 }}
             breakpoint="lg"
             collapsedWidth="0"
           >

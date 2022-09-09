@@ -130,7 +130,7 @@ function UserManagement() {
 
   //Message box
 
-  //Event
+  //Events
   const handleSubmit = async (user, actionType) => {
     switch (actionType) {
       case "Create":
@@ -204,7 +204,7 @@ function UserManagement() {
     setPaginationConfig({ ...paginationConfig, currentPage: currentPage });
   };
 
-  //Event
+  //Events
 
   //Other function
   const reloadData = () => {
