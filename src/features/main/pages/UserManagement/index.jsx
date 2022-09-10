@@ -3,7 +3,7 @@ import { Button, Modal, Input } from "antd";
 import UserForm from "features/main/components/UserForm";
 import Style from "features/main/pages/UserManagement/style.module.css";
 import instace from "api/instance";
-import UserList from "features/main/components/userList";
+import UserList from "features/main/components/UserList";
 import { groupId } from "common/contants/myContants";
 import {
   CREATE_SUCCESS_MESSAGE,

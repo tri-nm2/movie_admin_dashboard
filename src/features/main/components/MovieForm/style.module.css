@@ -1,0 +1,44 @@
+.label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.inputGroup,
+.showDate,
+.switchContainer,
+.rating,
+.filePicker {
+  margin-bottom: 20px;
+}
+
+.inputGroup .errorMessage {
+  display: block;
+  margin-top: 5px;
+  color: red;
+}
+
+.showDate span {
+  margin-right: 10px;
+}
+
+.switchContainer {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+}
+
+.switchContainer .switchGroup {
+  margin-right: 10px;
+}
+
+.switchGroup .switchLabel {
+  margin-right: 10px;
+}
+
+.rating span {
+  margin-right: 10px;
+}
+
+.filePicker span {
+  margin-right: 10px;
+}
