@@ -7,6 +7,7 @@ import moment from "moment";
 import { REQUIRED_MESSAGE } from "common/contants/messageContant";
 import { getCurrentDate } from "common/utils/date";
 import Style from "./style.module.css";
+import { movieGroupID } from "common/contants/myContants";
 
 const { TextArea } = Input;
 
@@ -15,6 +16,14 @@ function MovieForm(props) {
   const currentDate = props.selectMovie.ngayKhoiChieu
     ? props.selectMovie.ngayKhoiChieu
     : getCurrentDate();
+  const currentPlay = props.selectMovie.dangChieu
+    ? props.selectMovie.dangChieu
+    : true;
+  const willPlay = props.selectMovie.dangChieu
+    ? props.selectMovie.sapChieu
+    : false;
+  const hot = props.selectMovie.hot ? props.selectMovie.hot : true;
+  const rating = props.selectMovie.danhGia ? props.selectMovie.danhGia : 1;
 
   const schema = yup.object().shape({
     tenPhim: yup.string().required(REQUIRED_MESSAGE),
@@ -28,10 +37,10 @@ function MovieForm(props) {
       trailer: props.selectMovie.trailer,
       moTa: props.selectMovie.moTa,
       ngayKhoiChieu: currentDate,
-      dangChieu: true,
-      sapChieu: false,
-      hot: true,
-      danhGia: 10,
+      dangChieu: currentPlay,
+      sapChieu: willPlay,
+      hot: hot,
+      danhGia: rating,
       hinhAnh: null,
     },
     validationSchema: schema,
@@ -40,12 +49,13 @@ function MovieForm(props) {
       movie.append("tenPhim", values.tenPhim);
       movie.append("trailer", values.trailer);
       movie.append("moTa", values.moTa);
+      movie.append("maNhom", movieGroupID);
       movie.append("ngayKhoiChieu", "10/09/2022");
       movie.append("dangChieu", values.dangChieu);
       movie.append("sapChieu", values.sapChieu);
       movie.append("hot", values.hot);
       movie.append("danhGia", values.danhGia);
-      movie.append("file", values.hinhAnh, values.hinhAnh);
+      movie.append("file", values.hinhAnh, values.hinhAnh.name);
 
       props.handleSubmit(movie, "Create");
     },
@@ -72,7 +82,6 @@ function MovieForm(props) {
   };
 
   const handleChange = (info) => {
-    console.log(info);
     formik.setFieldValue("hinhAnh", info.file);
   };
 

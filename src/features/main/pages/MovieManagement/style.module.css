@@ -9,3 +9,11 @@
 .main .title {
   font-size: 30px;
 }
+
+.main .movieListContainer {
+  margin-top: 20px;
+}
+
+.main .movieListContainer .searchBox {
+  margin-bottom: 30px;
+}
