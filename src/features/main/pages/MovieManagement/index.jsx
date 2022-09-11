@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import Style from "features/main/pages/MovieManagement/style.module.css";
 import { Button, Modal, Input } from "antd";
 import MovieForm from "features/main/components/MovieForm";
+import ScheduleForm from "features/main/components/ScheduleForm";
 import instace from "api/instance";
 import {
   CREATE_SUCCESS_MESSAGE,
@@ -17,8 +18,9 @@ function MovieManagement() {
   const { Search } = Input;
 
   const [open, setOpen] = useState(false);
+  const [openSchedule, setOpenSchedule] = useState(false);
   const [movieList, setMovieList] = useState([]);
-  const [selectMovie, setSelectedMovie] = useState({});
+  const [selectedMovie, setSelectedMovie] = useState({});
   const [paginationConfig, setPaginationConfig] = useState({
     currentPage: 1,
     pageSize: 10,
@@ -131,6 +133,23 @@ function MovieManagement() {
     setOpen(true);
   };
 
+  const handleCreateSchedule = async (schedule) => {
+    try {
+      // eslint-disable-next-line no-unused-vars
+      const response = await instace.request({
+        url: "api/QuanLyDatVe/TaoLichChieu",
+        method: "POST",
+        data: schedule,
+      });
+
+      showInfo(CREATE_SUCCESS_MESSAGE);
+    } catch (error) {
+      showError(error.response.data.content);
+    } finally {
+      setOpenSchedule(false);
+    }
+  };
+
   const handleSubmit = async (movie, action) => {
     switch (action) {
       case "Create":
@@ -200,6 +219,11 @@ function MovieManagement() {
   const handleDeleteButtonClick = (movieId) => {
     showConfirm(movieId);
   };
+
+  const handleCreateScheduleButtonClick = (movie) => {
+    setSelectedMovie(movie);
+    setOpenSchedule(true);
+  };
   //Events
 
   return (
@@ -219,7 +243,23 @@ function MovieManagement() {
         }}
         footer={[]}
       >
-        <MovieForm selectMovie={selectMovie} handleSubmit={handleSubmit} />
+        <MovieForm selectMovie={selectedMovie} handleSubmit={handleSubmit} />
+      </Modal>
+
+      <Modal
+        title="Tạo lịch chiếu"
+        centered
+        open={openSchedule}
+        destroyOnClose={true}
+        onCancel={() => {
+          setOpenSchedule(false);
+        }}
+        footer={[]}
+      >
+        <ScheduleForm
+          selectMovie={selectedMovie}
+          handleCreateSchedule={handleCreateSchedule}
+        />
       </Modal>
 
       <div className={Style.movieListContainer}>
@@ -238,6 +278,7 @@ function MovieManagement() {
           handleChangePage={handleChangePage}
           handleUpdateButtonClick={handleUpdateButtonClick}
           handleDeleteButtonClick={handleDeleteButtonClick}
+          handleCreateScheduleButtonClick={handleCreateScheduleButtonClick}
         />
       </div>
     </div>

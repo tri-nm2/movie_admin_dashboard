@@ -1,0 +1,17 @@
+.inputGroup {
+  margin-bottom: 20px;
+}
+
+.inputGroup span {
+  display: block;
+  margin-bottom: 5px;
+}
+
+.inputGroup .select {
+  width: 100% !important;
+}
+
+.inputGroup .dateTime,
+.inputGroup .price {
+  width: 100%;
+}

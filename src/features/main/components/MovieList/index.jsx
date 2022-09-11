@@ -1,6 +1,6 @@
 import React from "react";
 import { Button, Table } from "antd";
-import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
+import { EditOutlined, DeleteOutlined, CopyOutlined } from "@ant-design/icons";
 import Style from "./style.module.css";
 
 function MovieList(props) {
@@ -58,6 +58,14 @@ function MovieList(props) {
             icon={<DeleteOutlined />}
             onClick={() => {
               props.handleDeleteButtonClick(movie.maPhim);
+            }}
+          ></Button>
+          <Button
+            key={movie.dataIndex}
+            icon={<CopyOutlined />}
+            style={{ marginTop: 10 }}
+            onClick={() => {
+              props.handleCreateScheduleButtonClick(movie);
             }}
           ></Button>
         </>
