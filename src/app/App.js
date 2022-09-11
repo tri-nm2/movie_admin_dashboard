@@ -5,6 +5,7 @@ import { BrowserRouter as Router, Switch, Route } from "react-router-dom";
 import Style from "app/App.module.css";
 import { fetchUserInfoAction } from "features/authentication/action";
 import { useDispatch } from "react-redux";
+import { LogInRoute } from "./guard";
 
 const MovieManagement = React.lazy(() =>
   import("features/main/pages/MovieManagement")
@@ -28,7 +29,7 @@ function App() {
 
   return (
     <Router>
-      <div>
+      <div className="container">
         <CyberMovieHeader />
         <div className={Style.main}>
           <SideBar />
@@ -37,15 +38,24 @@ function App() {
               <Route exact path="/">
                 <SignIn />
               </Route>
-              <Route path="/movieManagement">
-                <MovieManagement />
-              </Route>
-              <Route path="/userManagement">
-                <UserManagement />
-              </Route>
-              <Route path="/profile">
-                <Profile />
-              </Route>
+
+              <LogInRoute
+                path="/movieManagement"
+                component={MovieManagement}
+                redirectPath="/"
+              />
+
+              <LogInRoute
+                path="/userManagement"
+                component={UserManagement}
+                redirectPath="/"
+              />
+
+              <LogInRoute
+                path="/profile"
+                component={Profile}
+                redirectPath="/"
+              />
             </Switch>
           </Suspense>
         </div>
