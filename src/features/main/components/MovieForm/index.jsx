@@ -1,4 +1,12 @@
-import { Input, InputNumber, DatePicker, Switch, Button, Upload } from "antd";
+import {
+  Input,
+  InputNumber,
+  DatePicker,
+  Switch,
+  Button,
+  Upload,
+  Modal,
+} from "antd";
 import { UploadOutlined } from "@ant-design/icons";
 import React from "react";
 import * as yup from "yup";
@@ -8,21 +16,24 @@ import { REQUIRED_MESSAGE } from "common/contants/messageContant";
 import { getCurrentDate } from "common/utils/date";
 import Style from "./style.module.css";
 import { movieGroupID } from "common/contants/myContants";
-
-const { TextArea } = Input;
+import { NO_IMAGEFILE_MESSAGE } from "common/contants/messageContant";
 
 function MovieForm(props) {
+  const { TextArea } = Input;
+  const { error } = Modal;
+
   const dateFormat = "DD/MM/YYYY";
   const currentDate = props.selectMovie.ngayKhoiChieu
     ? props.selectMovie.ngayKhoiChieu
     : getCurrentDate();
-  const currentPlay = props.selectMovie.dangChieu
+  //Initial values for switch control, if maPhim = true meaning selectMovie is set
+  const currentPlay = props.selectMovie.maPhim
     ? props.selectMovie.dangChieu
     : true;
-  const willPlay = props.selectMovie.dangChieu
+  const willPlay = props.selectMovie.maPhim
     ? props.selectMovie.sapChieu
     : false;
-  const hot = props.selectMovie.hot ? props.selectMovie.hot : true;
+  const hot = props.selectMovie.maPhim ? props.selectMovie.hot : true;
   const rating = props.selectMovie.danhGia ? props.selectMovie.danhGia : 1;
 
   const schema = yup.object().shape({
@@ -46,20 +57,45 @@ function MovieForm(props) {
     validationSchema: schema,
     onSubmit: (values) => {
       let movie = new FormData();
+      if (props.selectMovie.maPhim) {
+        movie.append("maPhim", props.selectMovie.maPhim);
+      }
       movie.append("tenPhim", values.tenPhim);
       movie.append("trailer", values.trailer);
       movie.append("moTa", values.moTa);
       movie.append("maNhom", movieGroupID);
-      movie.append("ngayKhoiChieu", "10/09/2022");
+      movie.append("ngayKhoiChieu", values.ngayKhoiChieu);
       movie.append("dangChieu", values.dangChieu);
       movie.append("sapChieu", values.sapChieu);
       movie.append("hot", values.hot);
       movie.append("danhGia", values.danhGia);
-      movie.append("file", values.hinhAnh, values.hinhAnh.name);
+      if (values.hinhAnh) {
+        movie.append("file", values.hinhAnh, values.hinhAnh.name);
+      } else {
+        showError(NO_IMAGEFILE_MESSAGE);
+        return;
+      }
 
-      props.handleSubmit(movie, "Create");
+      let action;
+      if (props.selectMovie.tenPhim) {
+        action = "Update";
+      } else {
+        action = "Create";
+      }
+
+      props.handleSubmit(movie, action);
     },
   });
+
+  //Message box
+  const showError = (message) => {
+    error({
+      title: "Thông báo",
+      content: message,
+    });
+  };
+  //Message box
+
   //Events
   const handleDatePickerChange = (date, dateString) => {
     formik.setFieldValue("ngayKhoiChieu", dateString);

@@ -10,6 +10,7 @@ import {
 } from "common/contants/messageContant";
 import MovieList from "features/main/components/MovieList";
 import { movieGroupID } from "common/contants/myContants";
+import { formatDate } from "common/utils/date";
 
 function MovieManagement() {
   const { info, error, confirm } = Modal;
@@ -150,6 +151,26 @@ function MovieManagement() {
           setOpen(false);
         }
         break;
+      case "Update":
+        try {
+          // eslint-disable-next-line no-unused-vars
+          const response = await instace.request({
+            url: "/api/QuanLyPhim/CapNhatPhimUpload",
+            method: "POST",
+            data: movie,
+          });
+
+          showInfo(UPDATE_SUCCESS_MESSAGE);
+
+          fetchMovieList();
+          console.log(movie);
+        } catch (error) {
+          // console.log(error);
+          showError(error.response.data.content);
+        } finally {
+          setOpen(false);
+        }
+        break;
       default:
         break;
     }
@@ -167,6 +188,13 @@ function MovieManagement() {
     } else {
       fetchMovieList();
     }
+  };
+
+  const handleUpdateButtonClick = (data) => {
+    const date = formatDate(data.ngayKhoiChieu);
+    const movie = { ...data, ngayKhoiChieu: date };
+    setSelectedMovie(movie);
+    setOpen(true);
   };
 
   const handleDeleteButtonClick = (movieId) => {
@@ -208,6 +236,7 @@ function MovieManagement() {
           movieList={movieList}
           paginationConfig={paginationConfig}
           handleChangePage={handleChangePage}
+          handleUpdateButtonClick={handleUpdateButtonClick}
           handleDeleteButtonClick={handleDeleteButtonClick}
         />
       </div>
