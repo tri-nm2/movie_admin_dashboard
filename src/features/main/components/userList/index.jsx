@@ -55,6 +55,7 @@ function UserList(props) {
   return (
     <div>
       <Table
+        rowKey="taiKhoan"
         columns={columns}
         dataSource={props.userList}
         pagination={{

@@ -46,7 +46,7 @@ function MovieList(props) {
       render: (_, movie) => (
         <>
           <Button
-            key={movie.dataIndex}
+            key={movie.maPhim}
             icon={<EditOutlined />}
             style={{ marginRight: 10 }}
             onClick={() => {
@@ -54,7 +54,7 @@ function MovieList(props) {
             }}
           ></Button>
           <Button
-            key={movie.dataIndex}
+            key={movie.maPhim}
             icon={<DeleteOutlined />}
             onClick={() => {
               props.handleDeleteButtonClick(movie.maPhim);
@@ -68,6 +68,7 @@ function MovieList(props) {
     <div>
       <div>
         <Table
+          rowKey="maPhim"
           columns={columns}
           dataSource={props.movieList}
           pagination={{
